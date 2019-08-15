@@ -8,4 +8,12 @@
     <PackageReference Include="RabbitMQ.Client" Version="5.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Implementations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimpleChat.DAL\SimpleChat.DAL.csproj" />
+  </ItemGroup>
+
 </Project>
