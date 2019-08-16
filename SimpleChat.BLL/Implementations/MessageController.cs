@@ -123,7 +123,6 @@ namespace SimpleChat.BLL.Implementations
 
 					channel.BasicPublish("", message.Channel, null, messageBytes);
 				}
-				Console.WriteLine("Message sending success!" + Environment.NewLine);
 			}
 			catch (BrokerUnreachableException brokerException)
 			{
