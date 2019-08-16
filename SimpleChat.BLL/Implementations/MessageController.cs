@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using RabbitMQ.Client.Exceptions;
 using SimpleChat.BLL.Interfaces;
 using SimpleChat.DAL.Models;
 using System;
@@ -49,19 +50,26 @@ namespace SimpleChat.BLL.Implementations
 
 		public void ReceiveMessages(string chanelToListen)
 		{
-			connection = connectionFactory.CreateConnection();
-			channel = connection.CreateModel();
-
-			channel.QueueDeclare(chanelToListen, false, false, false, null);
-
-			var consumer = new EventingBasicConsumer(channel);
-			consumer.Received += (model, ea) =>
+			try
 			{
-				var body = ea.Body;
-				var message = Encoding.UTF8.GetString(body);
-				Console.WriteLine(" [x] Received {0}", message);
-			};
-			channel.BasicConsume(chanelToListen, true, consumer);
+				connection = connectionFactory.CreateConnection();
+				channel = connection.CreateModel();
+
+				channel.QueueDeclare(chanelToListen, false, false, false, null);
+
+				var consumer = new EventingBasicConsumer(channel);
+				consumer.Received += (model, ea) =>
+				{
+					var body = ea.Body;
+					var message = Encoding.UTF8.GetString(body);
+					Console.WriteLine(" [x] Received {0}", message);
+				};
+				channel.BasicConsume(chanelToListen, true, consumer);
+			}
+			catch (BrokerUnreachableException brokerException)
+			{
+				Console.WriteLine(brokerException.Message);
+			}
 
 		}
 
@@ -79,17 +87,23 @@ namespace SimpleChat.BLL.Implementations
 
 		public void SendMessage(Message message)
 		{
-			using (var connection = connectionFactory.CreateConnection())
-			using (var channel = connection.CreateModel())
+			try
 			{
-				channel.QueueDeclare(message.Channel, false, false, false, null);
+				using (var connection = connectionFactory.CreateConnection())
+				using (var channel = connection.CreateModel())
+				{
+					channel.QueueDeclare(message.Channel, false, false, false, null);
 
-				var messageBytes = message.GetBytes;
+					var messageBytes = message.GetBytes;
 
-				channel.BasicPublish("", message.Channel, null, messageBytes);
+					channel.BasicPublish("", message.Channel, null, messageBytes);
+				}
+				Console.WriteLine("Message sending success!");
 			}
-			Console.WriteLine("Message sending success!");
-
+			catch (BrokerUnreachableException brokerException)
+			{
+				Console.WriteLine(brokerException.Message);
+			}
 		}
 
 		public void SendMessages(IList<Message> messages)
