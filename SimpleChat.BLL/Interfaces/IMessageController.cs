@@ -8,9 +8,9 @@ namespace SimpleChat.BLL.Interfaces
 {
 	public interface IMessageController
 	{
-		Task ReConfigureControllerAsync(string host, string port, string virtualHost, string userName, string userPassword);
-		Task SendMessageAsync(Message message);
-		Task SendMessagesAsync(IList<Message> messages);
-		Task<List<Message>> ReceiveMessagesAsync();
+		void ReConfigureController(string host, int port, string virtualHost, string userName, string userPassword);
+		void SendMessage(Message message);
+		void SendMessages(IList<Message> messages);
+		void ReceiveMessages(string chanelToListen);
 	}
 }

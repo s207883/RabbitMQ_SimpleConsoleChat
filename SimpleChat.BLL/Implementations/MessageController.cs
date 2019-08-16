@@ -1,32 +1,85 @@
-﻿using SimpleChat.BLL.Interfaces;
+﻿using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using SimpleChat.BLL.Interfaces;
 using SimpleChat.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SimpleChat.BLL.Implementations
 {
-	class MessageController : IMessageController
+	public class MessageController : IMessageController
 	{
-		public Task<List<Message>> ReceiveMessagesAsync()
+		private ConnectionFactory connectionFactory;
+		private IConnection connection;
+		private IModel channel;
+
+		public MessageController(string hostName, int port, string virtualHost, string userName, string password)
 		{
-			throw new NotImplementedException();
+			ReConfigureController(hostName, port, virtualHost, userName, password);
 		}
 
-		public Task ReConfigureControllerAsync(string host, string port, string virtualHost, string userName, string userPassword)
+		public MessageController()
 		{
-			throw new NotImplementedException();
+			SetDefaultConfig();
 		}
 
-		public Task SendMessageAsync(Message message)
+		private void SetDefaultConfig()
 		{
-			throw new NotImplementedException();
+			//TODO: Сделать
 		}
 
-		public Task SendMessagesAsync(IList<Message> messages)
+		public void ReceiveMessages(string chanelToListen)
 		{
-			throw new NotImplementedException();
+			connection = connectionFactory.CreateConnection();
+			channel = connection.CreateModel();
+
+			channel.QueueDeclare(chanelToListen, false, false, false, null);
+
+			var consumer = new EventingBasicConsumer(channel);
+			consumer.Received += (model, ea) =>
+			{
+				var body = ea.Body;
+				var message = Encoding.UTF8.GetString(body);
+				Console.WriteLine(" [x] Received {0}", message);
+			};
+			channel.BasicConsume(chanelToListen, true, consumer);
+
+		}
+
+		public void ReConfigureController(string hostName, int port, string virtualHost, string userName, string password)
+		{
+			connectionFactory = new ConnectionFactory()
+			{
+				HostName = hostName,
+				Port = port,
+				//VirtualHost = virtualHost,
+				UserName = userName,
+				Password = password
+			};
+		}
+
+		public void SendMessage(Message message)
+		{
+			using (var connection = connectionFactory.CreateConnection())
+			using (var channel = connection.CreateModel())
+			{
+				channel.QueueDeclare(message.Channel, false, false, false, null);
+
+				var messageBytes = message.GetBytes;
+
+				channel.BasicPublish("", message.Channel, null, messageBytes);
+			}
+			Console.WriteLine("Message sending success!");
+
+		}
+
+		public void SendMessages(IList<Message> messages)
+		{
+			foreach (var message in messages)
+			{
+				SendMessage(message);
+			}
 		}
 	}
 }
