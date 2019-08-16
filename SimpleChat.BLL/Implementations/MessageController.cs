@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Configuration;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using SimpleChat.BLL.Interfaces;
 using SimpleChat.DAL.Models;
@@ -26,7 +27,24 @@ namespace SimpleChat.BLL.Implementations
 
 		private void SetDefaultConfig()
 		{
-			//TODO: Сделать
+			var jsonConfiguration = new ConfigurationBuilder()
+				.SetBasePath(Environment.CurrentDirectory)
+				.AddJsonFile("conf.json").Build();
+
+			var host = jsonConfiguration.GetSection("host").Value;
+			var port = jsonConfiguration.GetSection("port").Value;
+			var virtualHost = jsonConfiguration.GetSection("virtualHost").Value;
+			var userName = jsonConfiguration.GetSection("userName").Value;
+			var password = jsonConfiguration.GetSection("password").Value;
+
+			connectionFactory = new ConnectionFactory()
+			{
+				HostName = host,
+				Port = int.Parse(port),
+				VirtualHost = virtualHost,
+				UserName = userName,
+				Password = password
+			};
 		}
 
 		public void ReceiveMessages(string chanelToListen)
@@ -53,7 +71,7 @@ namespace SimpleChat.BLL.Implementations
 			{
 				HostName = hostName,
 				Port = port,
-				//VirtualHost = virtualHost,
+				VirtualHost = virtualHost,
 				UserName = userName,
 				Password = password
 			};
