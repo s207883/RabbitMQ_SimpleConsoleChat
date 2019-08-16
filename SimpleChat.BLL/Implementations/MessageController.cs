@@ -77,7 +77,11 @@ namespace SimpleChat.BLL.Implementations
 			{
 				Console.WriteLine(brokerException.Message);
 			}
-
+			catch (Exception exc)
+			{
+				Console.WriteLine(exc.Message);
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -124,6 +128,11 @@ namespace SimpleChat.BLL.Implementations
 			catch (BrokerUnreachableException brokerException)
 			{
 				Console.WriteLine(brokerException.Message);
+			}
+			catch (Exception exc)
+			{
+				Console.WriteLine(exc.Message);
+				throw;
 			}
 		}
 
