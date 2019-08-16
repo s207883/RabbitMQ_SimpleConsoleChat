@@ -62,7 +62,7 @@ namespace SimpleChat.BLL.Implementations
 				{
 					var body = ea.Body;
 					var message = Encoding.UTF8.GetString(body);
-					Console.WriteLine(" [x] Received {0}", message);
+					Console.WriteLine($"Incoming message: {message}");
 				};
 				channel.BasicConsume(chanelToListen, true, consumer);
 			}
@@ -83,6 +83,8 @@ namespace SimpleChat.BLL.Implementations
 				UserName = userName,
 				Password = password
 			};
+
+			Console.WriteLine("New settings has setted.");
 		}
 
 		public void SendMessage(Message message)
@@ -98,7 +100,7 @@ namespace SimpleChat.BLL.Implementations
 
 					channel.BasicPublish("", message.Channel, null, messageBytes);
 				}
-				Console.WriteLine("Message sending success!");
+				Console.WriteLine("Message sending success!" + Environment.NewLine);
 			}
 			catch (BrokerUnreachableException brokerException)
 			{

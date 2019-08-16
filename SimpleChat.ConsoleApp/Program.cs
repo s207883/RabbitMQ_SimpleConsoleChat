@@ -13,18 +13,25 @@ namespace SimpleChat.ConsoleApp
 		{
 			messageController = new MessageController();
 			DrawMenu();
+			CommandsParser();
 		}
 		static void DrawMenu()
 		{
-			Console.WriteLine("What need to do?");
+			Console.Clear();
+			Console.WriteLine("Hello! All commands are written below.");
 			Console.WriteLine
 				(
 					$"Press {Environment.NewLine}" +
-					$"\tC - to configure connection {Environment.NewLine}" +
+					$"\tE - to configure connection {Environment.NewLine}" +
 					$"\tS - to send message {Environment.NewLine}" +
-					$"\tR - to connect channel {Environment.NewLine}" +
-					$"\tE - to exit {Environment.NewLine}"
+					$"\tL - to connect channel {Environment.NewLine}" +
+					$"\tQ - to exit {Environment.NewLine}" +
+					$"\tC - to clear console {Environment.NewLine}"
 				);
+		}
+
+		private static void CommandsParser()
+		{
 			bool continueWorking = true;
 			while (continueWorking)
 			{
@@ -32,7 +39,7 @@ namespace SimpleChat.ConsoleApp
 				Console.WriteLine();
 				switch (key)
 				{
-					case ConsoleKey.C:
+					case ConsoleKey.E:
 						Console.WriteLine($"Enter host name:");
 						var hostName = Console.ReadLine();
 						Console.WriteLine($"Enter port:");
@@ -43,7 +50,8 @@ namespace SimpleChat.ConsoleApp
 						var userName = Console.ReadLine();
 						Console.WriteLine($"Enter password");
 						var password = Console.ReadLine();
-						messageController = new MessageController(hostName,port,virtualHost,userName,password);
+						DrawMenu();
+						messageController = new MessageController(hostName, port, virtualHost, userName, password);
 						break;
 					case ConsoleKey.S:
 						Console.WriteLine($"Enter channel name:");
@@ -52,13 +60,16 @@ namespace SimpleChat.ConsoleApp
 						var message = Console.ReadLine();
 						messageController.SendMessage(new Message(message, channelToSend));
 						break;
-					case ConsoleKey.R:
+					case ConsoleKey.L:
 						Console.WriteLine($"Enter channel name to listen:");
 						var channelToListen = Console.ReadLine();
 						messageController.ReceiveMessages(channelToListen);
 						break;
-					case ConsoleKey.E:
+					case ConsoleKey.Q:
 						continueWorking = false;
+						break;
+					case ConsoleKey.C:
+						DrawMenu();
 						break;
 				}
 			}
