@@ -15,6 +15,11 @@ namespace SimpleChat.ConsoleApp
 			DrawMenu();
 			CommandsParser();
 		}
+
+		/// <summary>
+		/// Рисует меню.
+		/// Draws a menu.
+		/// </summary>
 		static void DrawMenu()
 		{
 			Console.Clear();
@@ -29,7 +34,10 @@ namespace SimpleChat.ConsoleApp
 					$"\tC - to clear console {Environment.NewLine}"
 				);
 		}
-
+		/// <summary>
+		/// Консольный ввод команд.
+		/// Console comands input.
+		/// </summary>
 		private static void CommandsParser()
 		{
 			bool continueWorking = true;

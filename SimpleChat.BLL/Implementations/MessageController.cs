@@ -26,6 +26,9 @@ namespace SimpleChat.BLL.Implementations
 			SetDefaultConfig();
 		}
 
+		/// <summary>
+		/// Configure connection factory using conf.json.
+		/// </summary>
 		private void SetDefaultConfig()
 		{
 			var jsonConfiguration = new ConfigurationBuilder()
@@ -48,6 +51,10 @@ namespace SimpleChat.BLL.Implementations
 			};
 		}
 
+		/// <summary>
+		/// Sets a listener on queue.
+		/// </summary>
+		/// <param name="chanelToListen"></param>
 		public void ReceiveMessages(string chanelToListen)
 		{
 			try
@@ -73,6 +80,14 @@ namespace SimpleChat.BLL.Implementations
 
 		}
 
+		/// <summary>
+		/// Configure connection factory.
+		/// </summary>
+		/// <param name="hostName">Host</param>
+		/// <param name="port">Port</param>
+		/// <param name="virtualHost">Virtual host</param>
+		/// <param name="userName">User name</param>
+		/// <param name="password">Password</param>
 		public void ReConfigureController(string hostName, int port, string virtualHost, string userName, string password)
 		{
 			connectionFactory = new ConnectionFactory()
@@ -87,6 +102,10 @@ namespace SimpleChat.BLL.Implementations
 			Console.WriteLine("New settings has setted.");
 		}
 
+		/// <summary>
+		/// Send message.
+		/// </summary>
+		/// <param name="message">Message.</param>
 		public void SendMessage(Message message)
 		{
 			try
@@ -108,6 +127,10 @@ namespace SimpleChat.BLL.Implementations
 			}
 		}
 
+		/// <summary>
+		/// Send a list of messages.
+		/// </summary>
+		/// <param name="messages">Messages</param>
 		public void SendMessages(IList<Message> messages)
 		{
 			foreach (var message in messages)
